@@ -180,16 +180,14 @@ section{padding:110px 60px;content-visibility:auto;contain-intrinsic-size:0 600p
   overflow:hidden;
 }
 .lb-img-wrap{
-  /* NO will-change — avoids creating a new containing block for fixed descendants */
   position:relative;
-  /* Shrink-wrap to image so caption width matches image width */
   display:inline-flex;
   flex-direction:column;
   align-items:center;
+  will-change:transform;
 }
 .lb-img{
   display:block;
-  /* Size relative to viewport so it's always centred regardless of scroll */
   max-width:min(90vw, 90dvw);
   max-height:min(85vh, 85dvh);
   border-radius:12px;
@@ -198,6 +196,8 @@ section{padding:110px 60px;content-visibility:auto;contain-intrinsic-size:0 600p
   user-select:none;
   -webkit-user-drag:none;
   pointer-events:none;
+  opacity:0;
+  transition:opacity .25s ease;
 }
 .lb-img.grabbing{cursor:none;}
 /* All chrome elements use fixed + viewport coords */
@@ -815,7 +815,11 @@ async function submitForm(e){
   const btn=form.querySelector('.btn-submit');
   btn.textContent='Sending…'; btn.disabled=true;
   try{
-    const res=await fetch(form.action,{method:'POST',body:new FormData(form),headers:{'Accept':'application/json'}});
+    // Build FormData without the file — Formspree free plan rejects file attachments via fetch
+    const fd=new FormData(form);
+    const fileInput=document.getElementById('fileInput');
+    if(fileInput.files.length){ fd.delete('attachment'); fd.set('note','[Client has a reference file to share — please ask them to send it via WhatsApp or email]'); }
+    const res=await fetch(form.action,{method:'POST',body:fd,headers:{'Accept':'application/json'}});
     if(res.ok){ form.style.display='none'; document.getElementById('formSuccess').style.display='block'; }
     else{ btn.textContent='Send Enquiry'; btn.disabled=false; alert('Something went wrong. Please try WhatsApp or email us directly.'); }
   }catch{ btn.textContent='Send Enquiry'; btn.disabled=false; alert('Network error. Please try WhatsApp or email us directly.'); }
@@ -869,22 +873,38 @@ window.addEventListener('mousemove',e=>{
 window.addEventListener('mouseup',()=>{ if(!dragging)return; dragging=false; lbImg.classList.remove('grabbing'); updateLbCursorShape(); });
 
 // Touch
-let lastDist=0;
+let lastDist=0,lastMidX=0,lastMidY=0,touchRafPending=false;
 lb.addEventListener('touchstart',e=>{
-  if(e.touches.length===2){ lastDist=Math.hypot(e.touches[1].clientX-e.touches[0].clientX,e.touches[1].clientY-e.touches[0].clientY); }
-  else if(e.touches.length===1&&scale>1){ dragging=true; dragStartX=e.touches[0].clientX; dragStartY=e.touches[0].clientY; dragTx=tx; dragTy=ty; }
+  if(e.touches.length===2){
+    const dx=e.touches[1].clientX-e.touches[0].clientX, dy=e.touches[1].clientY-e.touches[0].clientY;
+    lastDist=Math.hypot(dx,dy);
+    lastMidX=(e.touches[0].clientX+e.touches[1].clientX)/2;
+    lastMidY=(e.touches[0].clientY+e.touches[1].clientY)/2;
+  } else if(e.touches.length===1&&scale>1){
+    dragging=true; dragStartX=e.touches[0].clientX; dragStartY=e.touches[0].clientY; dragTx=tx; dragTy=ty;
+  }
 },{passive:true});
 lb.addEventListener('touchmove',e=>{
   e.preventDefault();
   if(e.touches.length===2){
-    const d=Math.hypot(e.touches[1].clientX-e.touches[0].clientX,e.touches[1].clientY-e.touches[0].clientY);
-    scale=Math.max(MIN_SCALE,Math.min(MAX_SCALE,scale*(d/lastDist)));
-    lastDist=d; clampPan(); applyTransform(false);
+    const dx=e.touches[1].clientX-e.touches[0].clientX, dy=e.touches[1].clientY-e.touches[0].clientY;
+    const d=Math.hypot(dx,dy);
+    const ratio=d/lastDist;
+    const newScale=Math.max(MIN_SCALE,Math.min(MAX_SCALE,scale*ratio));
+    // pan toward pinch midpoint
+    const midX=(e.touches[0].clientX+e.touches[1].clientX)/2;
+    const midY=(e.touches[0].clientY+e.touches[1].clientY)/2;
+    tx=(tx+(midX-lastMidX))*ratio;
+    ty=(ty+(midY-lastMidY))*ratio;
+    scale=newScale; lastDist=d; lastMidX=midX; lastMidY=midY;
+    clampPan();
+    if(!touchRafPending){ touchRafPending=true; requestAnimationFrame(()=>{ applyTransform(false); touchRafPending=false; }); }
   } else if(dragging&&e.touches.length===1){
-    tx=dragTx+(e.touches[0].clientX-dragStartX); ty=dragTy+(e.touches[0].clientY-dragStartY); clampPan(); applyTransform(false);
+    tx=dragTx+(e.touches[0].clientX-dragStartX); ty=dragTy+(e.touches[0].clientY-dragStartY); clampPan();
+    if(!touchRafPending){ touchRafPending=true; requestAnimationFrame(()=>{ applyTransform(false); touchRafPending=false; }); }
   }
 },{passive:false});
-lb.addEventListener('touchend',()=>{ dragging=false; });
+lb.addEventListener('touchend',e=>{ if(e.touches.length<2)dragging=false; });
 
 function updateLbCursorShape(){
   const svg=lbCur.querySelector('svg'); if(!svg)return;
@@ -919,22 +939,22 @@ function updateLbCursorShape(){
 }
 
 function openLb(src,caption){
-  // Reset state BEFORE showing, so the old position never flashes
   scale=1; tx=0; ty=0;
   lbWrap.style.transition='none';
   lbWrap.style.transform='translate(0px,0px) scale(1)';
 
-  // Prevent body scroll without causing layout shift
   const scrollbarW=window.innerWidth-document.documentElement.clientWidth;
   document.body.style.overflow='hidden';
   document.body.style.paddingRight=scrollbarW+'px';
 
   lb.classList.add('active');
 
-  // Swap image — clear src first so onload fires even for same image
-  lbImg.src='';
-  lbImg.onload=()=>{ applyTransform(false); };
+  // Fade in when ready — no src='' blank flash
+  lbImg.style.opacity='0';
+  lbImg.onload=()=>{ applyTransform(false); lbImg.style.opacity='1'; };
+  // If already cached, onload may not fire — handle that
   lbImg.src=src;
+  if(lbImg.complete&&lbImg.naturalWidth){ lbImg.style.opacity='1'; applyTransform(false); }
   document.getElementById('lbCaption').textContent=caption;
 
   if(!isMobile){
