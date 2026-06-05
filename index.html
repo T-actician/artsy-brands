@@ -137,8 +137,8 @@ section{padding:110px 60px;content-visibility:auto;contain-intrinsic-size:0 600p
 .services-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:0;}
 .svc-card{background:var(--dark3);padding:44px 36px;position:relative;overflow:hidden;transition:all .4s;border:1px solid rgba(0,0,0,.85);will-change:transform;contain:layout style;background-size:cover;background-position:center;border-radius:16px;}
 /* Golden gradient overlay */
-.svc-card::before{content:'';position:absolute;inset:0;background:linear-gradient(160deg,rgba(8,10,20,.94) 0%,rgba(10,14,30,.90) 50%,rgba(30,20,0,.85) 100%);transition:opacity .4s;z-index:0;}
-.svc-card:hover::before{opacity:.80;}
+.svc-card::before{content:'';position:absolute;inset:0;background:linear-gradient(160deg,rgba(8,18,45,.88) 0%,rgba(15,30,70,.78) 45%,rgba(201,160,32,.22) 100%);transition:opacity .4s;z-index:0;}
+.svc-card:hover::before{opacity:.75;}
 /* Bottom accent line */
 .svc-card::after{content:'';position:absolute;bottom:0;left:0;width:0;height:2px;background:linear-gradient(to right,var(--pink),var(--gold));transition:width .5s;z-index:2;}
 .svc-card:hover{border-color:rgba(201,160,32,.45);transform:translateY(-4px);box-shadow:0 20px 48px rgba(201,160,32,.18);}
@@ -146,19 +146,22 @@ section{padding:110px 60px;content-visibility:auto;contain-intrinsic-size:0 600p
 /* All direct children above the overlay */
 .svc-card > *{position:relative;z-index:1;}
 .svc-icon{font-size:2.2rem;margin-bottom:20px;display:block;}
-.svc-num{font-family:var(--serif);font-size:4rem;font-weight:900;color:rgba(232,23,122,.18);line-height:1;position:absolute;top:20px;right:24px;transition:color .4s;z-index:1;}
-.svc-card:hover .svc-num{color:rgba(232,23,122,.25);}
-.svc-name{font-family:var(--serif);font-size:1.4rem;font-weight:700;color:#ffffff;margin-bottom:12px;text-shadow:0 1px 8px rgba(0,0,0,.6);}
-.svc-desc{font-family:var(--sans);font-size:.75rem;font-weight:400;color:rgba(255,255,255,.82);line-height:1.8;letter-spacing:.02em;margin-bottom:24px;text-shadow:0 1px 4px rgba(0,0,0,.5);}
+.svc-num{font-family:var(--serif);font-size:4rem;font-weight:900;color:rgba(232,23,122,.12);line-height:1;position:absolute;top:20px;right:24px;transition:color .4s;z-index:1;}
+.svc-card:hover .svc-num{color:rgba(232,23,122,.15);}
+.svc-name{font-family:var(--serif);font-size:1.4rem;font-weight:700;color:var(--white);margin-bottom:12px;}
+.svc-desc{font-family:var(--sans);font-size:.72rem;font-weight:300;color:var(--grey);line-height:1.8;letter-spacing:.02em;margin-bottom:24px;}
 .svc-items{display:flex;flex-wrap:wrap;gap:6px;}
 .svc-tag{font-family:var(--sans);font-size:.55rem;font-weight:400;letter-spacing:.15em;text-transform:uppercase;color:var(--gold);background:rgba(201,160,32,.08);border:1px solid rgba(201,160,32,.15);padding:4px 10px;border-radius:2px;}
 
 /* PORTFOLIO */
 #portfolio{background:var(--dark);}
 .port-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-top:0;}
-.port-item{position:relative;overflow:hidden;border:1px solid rgba(201,160,32,.1);border-radius:16px;cursor:pointer;transition:transform .35s,box-shadow .35s,border-color .35s,background-size .45s ease;contain:layout style;touch-action:manipulation;-webkit-tap-highlight-color:transparent;aspect-ratio:4/3;background-size:100%;background-position:center;background-repeat:no-repeat;background-color:var(--dark3);}
-.port-item:hover{transform:translateY(-6px);box-shadow:0 24px 48px rgba(232,23,122,.18);border-color:rgba(232,23,122,.35);background-size:107%;}
-.port-overlay{position:absolute;inset:0;border-radius:16px;background:linear-gradient(to top,rgba(13,11,14,.88) 0%,rgba(232,23,122,.25) 60%,transparent 100%);opacity:0;display:flex;align-items:flex-end;justify-content:flex-start;padding:20px;transition:opacity .35s;}
+.port-item{position:relative;overflow:hidden;border:1px solid rgba(201,160,32,.1);border-radius:16px;cursor:none;transition:box-shadow .35s,border-color .35s;contain:layout paint style;touch-action:pan-y;-webkit-tap-highlight-color:transparent;aspect-ratio:4/3;background:var(--dark3);}
+/* bg rendered in a pseudo — transform is GPU-composited, no repaint */
+.port-item::before{content:'';position:absolute;inset:0;background-image:var(--bg);background-size:cover;background-position:center;background-repeat:no-repeat;border-radius:16px;transition:transform .45s ease;will-change:transform;}
+.port-item:hover{box-shadow:0 24px 48px rgba(232,23,122,.18);border-color:rgba(232,23,122,.35);}
+.port-item:hover::before{transform:scale(1.07);}
+.port-overlay{position:absolute;inset:0;border-radius:16px;background:linear-gradient(to top,rgba(13,11,14,.88) 0%,rgba(232,23,122,.25) 60%,transparent 100%);opacity:0;display:flex;align-items:flex-end;justify-content:flex-start;padding:20px;transition:opacity .35s;pointer-events:none;}
 .port-item:hover .port-overlay{opacity:1;}
 .port-caption{font-family:var(--serif);font-size:1rem;font-style:italic;color:var(--white);text-align:left;line-height:1.3;}
 .port-caption small{display:block;font-family:var(--sans);font-size:.55rem;font-style:normal;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);margin-bottom:4px;}
@@ -368,6 +371,8 @@ footer{background:var(--dark2);border-top:1px solid rgba(201,160,32,.1);padding:
   .services-grid{grid-template-columns:1fr;}
   .port-grid{grid-template-columns:1fr;gap:14px;}
   .port-item{border-radius:12px;}
+  .port-item::before{border-radius:12px;transition:none;will-change:auto;}
+  .port-item:hover::before{transform:none;}
   .testi-grid{grid-template-columns:1fr;}
   .contact-inner{grid-template-columns:1fr;gap:48px;}
   .form-row{grid-template-columns:1fr;}
@@ -536,25 +541,25 @@ footer{background:var(--dark2);border-top:1px solid rgba(201,160,32,.1);padding:
     <div class="divider"></div>
   </div>
   <div class="port-grid" style="max-width:1200px;margin:0 auto;">
-    <div class="port-item" style="background-image:url('images/mugs.webp')" onclick="openLb('images/mugs.webp','Branded Drinkware Collection')">
+    <div class="port-item" data-lb-src="images/mugs.webp" data-lb-cap="Branded Drinkware Collection" style="--bg:url('images/mugs.webp')">
       <div class="port-overlay"><div class="port-caption"><small>Drinkware</small>Custom Mugs & Flasks</div></div>
     </div>
-    <div class="port-item" style="background-image:url('images/apparel.webp')" onclick="openLb('images/apparel.webp','Corporate T-Shirts & Apparel')">
+    <div class="port-item" data-lb-src="images/apparel.webp" data-lb-cap="Corporate T-Shirts & Apparel" style="--bg:url('images/apparel.webp')">
       <div class="port-overlay"><div class="port-caption"><small>Wearables</small>Apparel & Uniforms</div></div>
     </div>
-    <div class="port-item" style="background-image:url('images/caps.webp')" onclick="openLb('images/caps.webp','Custom Caps & Bucket Hats')">
+    <div class="port-item" data-lb-src="images/caps.webp" data-lb-cap="Custom Caps & Bucket Hats" style="--bg:url('images/caps.webp')">
       <div class="port-overlay"><div class="port-caption"><small>Headwear</small>Caps & Bucket Hats</div></div>
     </div>
-    <div class="port-item" style="background-image:url('images/business%20cards.webp')" onclick="openLb('images/business%20cards.webp','Premium Business Cards')">
+    <div class="port-item" data-lb-src="images/business%20cards.webp" data-lb-cap="Premium Business Cards" style="--bg:url('images/business%20cards.webp')">
       <div class="port-overlay"><div class="port-caption"><small>Stationery</small>Premium Business Cards</div></div>
     </div>
-    <div class="port-item" style="background-image:url('images/gifts.webp')" onclick="openLb('images/gifts.webp','Custom Gift Hampers')">
+    <div class="port-item" data-lb-src="images/gifts.webp" data-lb-cap="Custom Gift Hampers" style="--bg:url('images/gifts.webp')">
       <div class="port-overlay"><div class="port-caption"><small>Gifting</small>Custom Gift Hampers</div></div>
     </div>
-    <div class="port-item" style="background-image:url('images/stationery.webp')" onclick="openLb('images/stationery.webp','Branded Stationery & Print')">
+    <div class="port-item" data-lb-src="images/stationery.webp" data-lb-cap="Branded Stationery & Print" style="--bg:url('images/stationery.webp')">
       <div class="port-overlay"><div class="port-caption"><small>Print</small>Branded Stationery</div></div>
     </div>
-    <div class="port-item" style="background-image:url('images/hoodies.webp')" onclick="openLb('images/hoodies.webp','Custom Hoodies & Sweaters')">
+    <div class="port-item" data-lb-src="images/hoodies.webp" data-lb-cap="Custom Hoodies & Sweaters" style="--bg:url('images/hoodies.webp')">
       <div class="port-overlay"><div class="port-caption"><small>Apparel</small>Hoodies & Sweaters</div></div>
     </div>
   </div>
@@ -738,7 +743,7 @@ if(!isMobile){
     el.addEventListener('mouseleave',()=>{cur.style.width='12px';cur.style.height='12px';ring.style.width='38px';ring.style.height='38px';ring.style.opacity='.6';ring.style.borderColor='var(--gold)';});
   });
   // Portfolio items: show open-hand magnify cursor
-  document.querySelectorAll('.port-item').forEach(el=>{
+  document.querySelectorAll('.port-item[data-lb-src]').forEach(el=>{
     el.addEventListener('mouseenter',()=>{
       cur.style.background='var(--gold)';
       cur.style.width='16px';cur.style.height='16px';
@@ -786,16 +791,42 @@ const imgCache={};
   });
 })();
 
-// ── MOBILE: touch tap on portfolio items ──────────────────────
-if(isMobile){
+// ── PORTFOLIO click delegation (desktop + mobile safe) ────────
+(function(){
+  // Apply ::before bg and wire clicks
   document.querySelectorAll('.port-item').forEach(item=>{
-    item.addEventListener('touchend',e=>{
-      // only fire if not scrolling
-      const onclick=item.getAttribute('onclick');
-      if(onclick){ e.preventDefault(); eval(onclick); }
-    },{passive:false});
+    const src=item.dataset.lbSrc;
+    const cap=item.dataset.lbCap;
+    if(!src)return;
+
+    // Desktop click
+    item.addEventListener('click',()=>openLb(src,cap));
   });
-}
+
+  // Mobile: distinguish tap from scroll — only fire if finger didn't move
+  if(isMobile){
+    let touchStartY=0, touchStartX=0, moved=false;
+    document.querySelectorAll('.port-item').forEach(item=>{
+      item.addEventListener('touchstart',e=>{
+        touchStartY=e.touches[0].clientY;
+        touchStartX=e.touches[0].clientX;
+        moved=false;
+      },{passive:true});
+      item.addEventListener('touchmove',e=>{
+        const dy=Math.abs(e.touches[0].clientY-touchStartY);
+        const dx=Math.abs(e.touches[0].clientX-touchStartX);
+        if(dy>8||dx>8) moved=true; // threshold: 8px = scrolling
+      },{passive:true});
+      item.addEventListener('touchend',e=>{
+        if(!moved){
+          e.preventDefault();
+          const src=item.dataset.lbSrc, cap=item.dataset.lbCap;
+          if(src) openLb(src,cap);
+        }
+      },{passive:false});
+    });
+  }
+})();
 
 // ── FILE UPLOAD ────────────────────────────────────────────────
 const ALLOWED_EXT=['.jpg','.jpeg','.png','.webp','.pdf','.ai','.eps','.svg','.psd'];
@@ -970,9 +1001,9 @@ function openLb(src,caption){
 
   lb.classList.add('active');
 
-  // If cached (already decoded) — show with zero delay, no flicker
   if(imgCache[src]){
     lbImg.src=imgCache[src].src;
+    lbImg.style.filter='none';
     lbImg.style.opacity='1';
     applyTransform(false);
   } else {
