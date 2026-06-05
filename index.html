@@ -135,12 +135,18 @@ section{padding:110px 60px;content-visibility:auto;contain-intrinsic-size:0 600p
 /* SERVICES */
 #services{background:var(--dark2);}
 .services-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:2px;margin-top:0;}
-.svc-card{background:var(--dark3);padding:44px 36px;position:relative;overflow:hidden;transition:all .4s;border:1px solid transparent;will-change:transform;contain:layout style;}
-.svc-card::after{content:'';position:absolute;bottom:0;left:0;width:0;height:2px;background:linear-gradient(to right,var(--pink),var(--gold));transition:width .5s;}
-.svc-card:hover{background:#271e33;border-color:rgba(232,23,122,.15);transform:translateY(-4px);}
+.svc-card{background:var(--dark3);padding:44px 36px;position:relative;overflow:hidden;transition:all .4s;border:1px solid transparent;will-change:transform;contain:layout style;background-size:cover;background-position:center;}
+/* Dark overlay sits between bg image and content */
+.svc-card::before{content:'';position:absolute;inset:0;background:linear-gradient(160deg,rgba(13,11,14,.82) 0%,rgba(26,21,32,.9) 60%,rgba(13,11,14,.96) 100%);transition:opacity .4s;z-index:0;}
+.svc-card:hover::before{opacity:.72;}
+/* Bottom accent line */
+.svc-card::after{content:'';position:absolute;bottom:0;left:0;width:0;height:2px;background:linear-gradient(to right,var(--pink),var(--gold));transition:width .5s;z-index:2;}
+.svc-card:hover{border-color:rgba(232,23,122,.25);transform:translateY(-4px);box-shadow:0 20px 40px rgba(0,0,0,.5);}
 .svc-card:hover::after{width:100%;}
+/* All direct children above the overlay */
+.svc-card > *{position:relative;z-index:1;}
 .svc-icon{font-size:2.2rem;margin-bottom:20px;display:block;}
-.svc-num{font-family:var(--serif);font-size:4rem;font-weight:900;color:rgba(232,23,122,.07);line-height:1;position:absolute;top:20px;right:24px;transition:color .4s;}
+.svc-num{font-family:var(--serif);font-size:4rem;font-weight:900;color:rgba(232,23,122,.12);line-height:1;position:absolute;top:20px;right:24px;transition:color .4s;z-index:1;}
 .svc-card:hover .svc-num{color:rgba(232,23,122,.15);}
 .svc-name{font-family:var(--serif);font-size:1.4rem;font-weight:700;color:var(--white);margin-bottom:12px;}
 .svc-desc{font-family:var(--sans);font-size:.72rem;font-weight:300;color:var(--grey);line-height:1.8;letter-spacing:.02em;margin-bottom:24px;}
@@ -471,7 +477,7 @@ footer{background:var(--dark2);border-top:1px solid rgba(201,160,32,.1);padding:
     <div class="divider"></div>
   </div>
   <div class="services-grid" style="max-width:1200px;margin:0 auto;">
-    <div class="svc-card reveal">
+    <div class="svc-card reveal" style="background-image:url('images/drinkware.webp')">
       <div class="svc-num">01</div>
       <span class="svc-icon">☕</span>
       <div class="svc-name">Branded Drinkware</div>
@@ -480,7 +486,7 @@ footer{background:var(--dark2);border-top:1px solid rgba(201,160,32,.1);padding:
         <span class="svc-tag">Mugs</span><span class="svc-tag">Tumblers</span><span class="svc-tag">Flasks</span><span class="svc-tag">Water Bottles</span>
       </div>
     </div>
-    <div class="svc-card reveal">
+    <div class="svc-card reveal" style="background-image:url('images/wear.webp')">
       <div class="svc-num">02</div>
       <span class="svc-icon">👕</span>
       <div class="svc-name">Apparel & Wearables</div>
@@ -489,7 +495,7 @@ footer{background:var(--dark2);border-top:1px solid rgba(201,160,32,.1);padding:
         <span class="svc-tag">T-Shirts</span><span class="svc-tag">Hoodies</span><span class="svc-tag">Caps</span><span class="svc-tag">Bucket Hats</span>
       </div>
     </div>
-    <div class="svc-card reveal">
+    <div class="svc-card reveal" style="background-image:url('images/brand-stationery.webp')">
       <div class="svc-num">03</div>
       <span class="svc-icon">🖨️</span>
       <div class="svc-name">Business Stationery</div>
@@ -498,7 +504,7 @@ footer{background:var(--dark2);border-top:1px solid rgba(201,160,32,.1);padding:
         <span class="svc-tag">Business Cards</span><span class="svc-tag">Brochures</span><span class="svc-tag">Letterheads</span>
       </div>
     </div>
-    <div class="svc-card reveal">
+    <div class="svc-card reveal" style="background-image:url('images/hampers.webp')">
       <div class="svc-num">04</div>
       <span class="svc-icon">🎁</span>
       <div class="svc-name">Custom Gifts & Hampers</div>
@@ -507,7 +513,7 @@ footer{background:var(--dark2);border-top:1px solid rgba(201,160,32,.1);padding:
         <span class="svc-tag">Gift Sets</span><span class="svc-tag">Hampers</span><span class="svc-tag">Merchandise</span>
       </div>
     </div>
-    <div class="svc-card reveal">
+    <div class="svc-card reveal" style="background-image:url('images/logo.webp')">
       <div class="svc-num">05</div>
       <span class="svc-icon">🎨</span>
       <div class="svc-name">Logo & Brand Design</div>
@@ -516,7 +522,7 @@ footer{background:var(--dark2);border-top:1px solid rgba(201,160,32,.1);padding:
         <span class="svc-tag">Logos</span><span class="svc-tag">Brand Identity</span><span class="svc-tag">Social Media</span>
       </div>
     </div>
-    <div class="svc-card reveal">
+    <div class="svc-card reveal" style="background-image:url('images/corporate.webp')">
       <div class="svc-num">06</div>
       <span class="svc-icon">📦</span>
       <div class="svc-name">Bulk & Corporate Orders</div>
