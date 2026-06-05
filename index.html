@@ -134,14 +134,14 @@ section{padding:110px 60px;content-visibility:auto;contain-intrinsic-size:0 600p
 
 /* SERVICES */
 #services{background:var(--dark2);}
-.services-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:2px;margin-top:0;}
-.svc-card{background:var(--dark3);padding:44px 36px;position:relative;overflow:hidden;transition:all .4s;border:1px solid transparent;will-change:transform;contain:layout style;background-size:cover;background-position:center;}
-/* Dark overlay sits between bg image and content */
-.svc-card::before{content:'';position:absolute;inset:0;background:linear-gradient(160deg,rgba(13,11,14,.82) 0%,rgba(26,21,32,.9) 60%,rgba(13,11,14,.96) 100%);transition:opacity .4s;z-index:0;}
-.svc-card:hover::before{opacity:.72;}
+.services-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:0;}
+.svc-card{background:var(--dark3);padding:44px 36px;position:relative;overflow:hidden;transition:all .4s;border:1px solid rgba(0,0,0,.85);will-change:transform;contain:layout style;background-size:cover;background-position:center;border-radius:16px;}
+/* Golden gradient overlay */
+.svc-card::before{content:'';position:absolute;inset:0;background:linear-gradient(160deg,rgba(8,18,45,.88) 0%,rgba(15,30,70,.78) 45%,rgba(201,160,32,.22) 100%);transition:opacity .4s;z-index:0;}
+.svc-card:hover::before{opacity:.75;}
 /* Bottom accent line */
 .svc-card::after{content:'';position:absolute;bottom:0;left:0;width:0;height:2px;background:linear-gradient(to right,var(--pink),var(--gold));transition:width .5s;z-index:2;}
-.svc-card:hover{border-color:rgba(232,23,122,.25);transform:translateY(-4px);box-shadow:0 20px 40px rgba(0,0,0,.5);}
+.svc-card:hover{border-color:rgba(201,160,32,.45);transform:translateY(-4px);box-shadow:0 20px 48px rgba(201,160,32,.18);}
 .svc-card:hover::after{width:100%;}
 /* All direct children above the overlay */
 .svc-card > *{position:relative;z-index:1;}
@@ -210,8 +210,7 @@ section{padding:110px 60px;content-visibility:auto;contain-intrinsic-size:0 600p
   user-select:none;
   -webkit-user-drag:none;
   pointer-events:none;
-  opacity:0;
-  transition:opacity .25s ease;
+  transition:filter .2s ease;
 }
 .lb-img.grabbing{cursor:none;}
 /* All chrome elements use fixed + viewport coords */
@@ -783,14 +782,20 @@ const obs=new IntersectionObserver(entries=>{
 },{threshold:0.06,rootMargin:'0px 0px -40px 0px'});
 document.querySelectorAll('.reveal').forEach(r=>obs.observe(r));
 
-// ── PORTFOLIO: preload ALL lightbox images immediately on page load ────
+// ── PORTFOLIO: preload ALL lightbox images into a cache map ────
+const imgCache={};
 (function(){
   const srcs=[
     'images/mugs.webp','images/apparel.webp','images/caps.webp',
     'images/business%20cards.webp','images/gifts.webp',
     'images/stationery.webp','images/hoodies.webp'
   ];
-  srcs.forEach(src=>{ const i=new Image(); i.src=src; });
+  srcs.forEach(src=>{
+    const i=new Image();
+    i.decoding='async';
+    i.onload=()=>{ imgCache[src]=i; };
+    i.src=src;
+  });
 })();
 
 // ── MOBILE: touch tap on portfolio items ──────────────────────
@@ -977,15 +982,32 @@ function openLb(src,caption){
 
   lb.classList.add('active');
 
-  // Show instantly if cached, fade in only if not yet loaded
-  lbImg.style.opacity='0';
-  lbImg.src=src;
-  if(lbImg.complete&&lbImg.naturalWidth){
+  // If cached (already decoded) — show with zero delay, no flicker
+  if(imgCache[src]){
+    lbImg.src=imgCache[src].src;
     lbImg.style.opacity='1';
     applyTransform(false);
   } else {
-    lbImg.onload=()=>{ lbImg.style.opacity='1'; applyTransform(false); };
+    // Fallback: show thumbnail blur from portfolio grid while full loads
+    const thumb=document.querySelector(`.port-item[onclick*="${src.replace('images/','').split('%')[0]}"] img`);
+    if(thumb){
+      lbImg.src=thumb.src; // instant low-res stand-in
+      lbImg.style.filter='blur(8px)';
+      lbImg.style.opacity='1';
+    } else {
+      lbImg.style.opacity='0';
+    }
+    const full=new Image();
+    full.onload=()=>{
+      lbImg.src=full.src;
+      lbImg.style.filter='none';
+      lbImg.style.opacity='1';
+      imgCache[src]=full;
+      applyTransform(false);
+    };
+    full.src=src;
   }
+
   document.getElementById('lbCaption').textContent=caption;
 
   if(!isMobile){
