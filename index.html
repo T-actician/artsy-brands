@@ -63,9 +63,25 @@ nav.scrolled{padding:16px 60px;background:rgba(13,11,14,.96);border-bottom:1px s
 
 /* HERO */
 #hero{min-height:100vh;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;background:var(--dark);}
-.hero-bg{position:absolute;inset:0;background:radial-gradient(ellipse 80% 60% at 50% 0%,rgba(232,23,122,.12) 0%,transparent 60%),radial-gradient(ellipse 50% 40% at 90% 100%,rgba(201,160,32,.1) 0%,transparent 60%);}
-.hero-grid{position:absolute;inset:0;background-image:linear-gradient(rgba(201,160,32,.04) 1px,transparent 1px),linear-gradient(90deg,rgba(201,160,32,.04) 1px,transparent 1px);background-size:60px 60px;}
-.hero-blob{position:absolute;width:600px;height:600px;border-radius:50%;background:radial-gradient(circle,rgba(232,23,122,.08) 0%,transparent 70%);top:50%;left:50%;transform:translate(-50%,-50%);animation:breathe 6s ease-in-out infinite;}
+.hero-bg-img{position:absolute;inset:0;background:url('images/backround.webp') center center/cover no-repeat;z-index:0;}
+.hero-bg-overlay {
+  background: linear-gradient(to bottom,
+    rgba(13,11,14,.25) 0%,
+    rgba(13,11,14,.15) 50%,
+    rgba(13,11,14,.5) 100%
+  );
+}.hero-bg{position:absolute;inset:0;background:radial-gradient(ellipse 80% 60% at 50% 0%,rgba(232,23,122,.10) 0%,transparent 60%),radial-gradient(ellipse 50% 40% at 90% 100%,rgba(201,160,32,.08) 0%,transparent 60%);z-index:2;}
+
+.hero-bg-img {
+  position: absolute;
+  inset: 0;
+  background: url('images/backround.webp') center center/cover no-repeat;
+  z-index: 0;
+  opacity: 0.04; /* adjust between 0.1 – 0.3 to taste */
+}
+.hero-grid{position:absolute;inset:0;background-image:linear-gradient(rgba(201,160,32,.03) 1px,transparent 1px),linear-gradient(90deg,rgba(201,160,32,.03) 1px,transparent 1px);background-size:60px 60px;z-index:2;}
+.hero-blob{position:absolute;width:600px;height:600px;border-radius:50%;background:radial-gradient(circle,rgba(232,23,122,.06) 0%,transparent 70%);top:50%;left:50%;transform:translate(-50%,-50%);animation:breathe 6s ease-in-out infinite;z-index:2;}
+.hero-float,.hero-content,.hero-scroll{position:relative;z-index:3;}
 @keyframes breathe{0%,100%{transform:translate(-50%,-50%) scale(1);}50%{transform:translate(-50%,-50%) scale(1.15);}}
 
 .hero-content{position:relative;z-index:2;text-align:center;padding:0 24px;animation:fadeUp 1s ease both;}
@@ -91,6 +107,8 @@ nav.scrolled{padding:16px 60px;background:rgba(13,11,14,.96);border-bottom:1px s
 .hero-scroll{position:absolute;bottom:32px;left:50%;transform:translateX(-50%);font-family:var(--sans);font-size:.52rem;letter-spacing:.3em;text-transform:uppercase;color:rgba(138,131,144,.6);animation:pulse 2s infinite;display:flex;flex-direction:column;align-items:center;gap:8px;}
 .hero-scroll::after{content:'';display:block;width:1px;height:36px;background:linear-gradient(to bottom,rgba(201,160,32,.5),transparent);}
 @keyframes pulse{0%,100%{opacity:.4;}50%{opacity:1;}}
+.hero-logo-svg{margin:8px 0 36px;animation:fadeUp 1s ease .2s both;}
+.nav-logo svg{height:44px;width:auto;}
 @keyframes fadeUp{from{opacity:0;transform:translateY(30px);}to{opacity:1;transform:none;}}
 
 /* FLOATING PRODUCTS (decorative hero) */
@@ -403,10 +421,31 @@ footer{background:var(--dark2);border-top:1px solid rgba(201,160,32,.1);padding:
 <!-- NAV -->
 <nav id="navbar">
   <a href="#hero" class="nav-logo">
-    <div>
-      <div class="nav-logo-ab">A<span>B</span></div>
-      <div class="nav-logo-tag">Artsy Brands</div>
-    </div>
+    <svg width="120" height="44" viewBox="0 0 300 110" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="navGold" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stop-color="#E2C060"/>
+          <stop offset="40%" stop-color="#C9A020"/>
+          <stop offset="70%" stop-color="#E8D080"/>
+          <stop offset="100%" stop-color="#B8880E"/>
+        </linearGradient>
+      </defs>
+      <!-- A lettermark -->
+      <polygon points="28,78 58,10 88,78" fill="url(#navGold)" stroke="none"/>
+      <polygon points="38,78 58,28 78,78 72,78 58,38 44,78" fill="#1A1520" stroke="none"/>
+      <rect x="42" y="55" width="32" height="8" fill="url(#navGold)"/>
+      <!-- B lettermark -->
+      <rect x="68" y="10" width="10" height="68" fill="url(#navGold)"/>
+      <path d="M78,10 L100,10 Q118,10 118,27 Q118,38 106,41 Q122,44 122,58 Q122,78 100,78 L78,78 Z" fill="url(#navGold)"/>
+      <path d="M88,20 L98,20 Q106,20 106,27 Q106,34 98,34 L88,34 Z" fill="#1A1520"/>
+      <path d="M88,44 L100,44 Q110,44 110,58 Q110,68 100,68 L88,68 Z" fill="#1A1520"/>
+      <!-- Pink swoosh -->
+      <path d="M18,62 Q60,8 130,14" stroke="#E8177A" stroke-width="6" fill="none" stroke-linecap="round"/>
+      <!-- Artsy Brands script text -->
+      <text x="140" y="48" font-family="Dancing Script, cursive" font-size="32" fill="#E8177A" font-weight="700">Artsy Brands</text>
+      <!-- Tagline -->
+      <text x="141" y="68" font-family="DM Sans, sans-serif" font-size="10" fill="#C9A020" letter-spacing="2" font-weight="400">CRAFTING YOUR IMAGINATION</text>
+    </svg>
   </a>
   <ul class="nav-links">
     <li><a href="#about">About</a></li>
@@ -423,6 +462,8 @@ footer{background:var(--dark2);border-top:1px solid rgba(201,160,32,.1);padding:
 
 <!-- HERO -->
 <section id="hero">
+  <div class="hero-bg-img"></div>
+  <div class="hero-bg-overlay"></div>
   <div class="hero-bg"></div>
   <div class="hero-grid"></div>
   <div class="hero-blob"></div>
@@ -434,12 +475,54 @@ footer{background:var(--dark2);border-top:1px solid rgba(201,160,32,.1);padding:
 
   <div class="hero-content">
     <div class="hero-badge">Nairobi's Creative Branding Studio</div>
-    <p class="hero-pre">Design · Print · Brand</p>
-    <h1 class="hero-h1">
-      <span class="gold">Artsy</span> Brands
-      <em class="script">Crafting Your Imagination</em>
-    </h1>
-    <p class="hero-tagline">From design ideas to <span>printed form</span> — gifts, apparel, stationery & more.</p>
+    <div class="hero-logo-svg">
+      <svg viewBox="0 0 520 320" xmlns="http://www.w3.org/2000/svg" width="100%" style="max-width:420px;display:block;margin:0 auto;">
+        <defs>
+          <linearGradient id="heroGold" x1="10%" y1="0%" x2="90%" y2="100%">
+            <stop offset="0%" stop-color="#F0D870"/>
+            <stop offset="30%" stop-color="#C9A020"/>
+            <stop offset="60%" stop-color="#EDD060"/>
+            <stop offset="100%" stop-color="#A07010"/>
+          </linearGradient>
+          <linearGradient id="heroGoldShine" x1="0%" y1="0%" x2="50%" y2="100%">
+            <stop offset="0%" stop-color="#F5E080"/>
+            <stop offset="50%" stop-color="#C9A020"/>
+            <stop offset="100%" stop-color="#906010"/>
+          </linearGradient>
+          <filter id="glow">
+            <feGaussianBlur stdDeviation="3" result="blur"/>
+            <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+          </filter>
+          <filter id="pinkGlow">
+            <feGaussianBlur stdDeviation="2.5" result="blur"/>
+            <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+          </filter>
+        </defs>
+        <!-- A lettermark -->
+        <polygon points="60,200 130,30 200,200" fill="url(#heroGold)" filter="url(#glow)"/>
+        <polygon points="80,200 130,68 180,200 165,200 130,88 95,200" fill="#0D0B0E"/>
+        <rect x="95" y="145" width="70" height="18" fill="url(#heroGold)"/>
+        <!-- B lettermark -->
+        <rect x="175" y="30" width="22" height="170" fill="url(#heroGold)" filter="url(#glow)"/>
+        <path d="M197,30 L242,30 Q290,30 290,72 Q290,100 265,108 Q298,116 298,152 Q298,200 242,200 L197,200 Z" fill="url(#heroGoldShine)" filter="url(#glow)"/>
+        <path d="M219,52 L238,52 Q266,52 266,72 Q266,90 238,90 L219,90 Z" fill="#0D0B0E"/>
+        <path d="M219,112 L242,112 Q274,112 274,152 Q274,178 242,178 L219,178 Z" fill="#0D0B0E"/>
+        <!-- Pink swoosh -->
+        <path d="M40,158 Q120,20 310,38" stroke="#E8177A" stroke-width="14" fill="none" stroke-linecap="round" filter="url(#pinkGlow)" opacity="0.95"/>
+        <!-- Sparkles -->
+        <g fill="#C9A020" opacity="0.7">
+          <text x="20" y="95" font-size="18">✦</text>
+          <text x="8" y="130" font-size="12">✦</text>
+          <text x="330" y="50" font-size="14">✦</text>
+          <text x="345" y="30" font-size="10">✦</text>
+          <text x="358" y="48" font-size="8">✦</text>
+        </g>
+        <!-- Artsy Brands script -->
+        <text x="50" y="258" font-family="Dancing Script, cursive" font-size="78" fill="#E8177A" font-weight="700" filter="url(#pinkGlow)">Artsy Brands</text>
+        <!-- Tagline -->
+        <text x="98" y="292" font-family="DM Sans, sans-serif" font-size="17" fill="#C9A020" letter-spacing="4" font-weight="400" text-anchor="start">CRAFTING YOUR IMAGINATION</text>
+      </svg>
+    </div>
     <div class="hero-btns">
       <a href="#contact" class="btn-primary"><span>Get a Free Quote</span></a>
       <a href="#portfolio" class="btn-secondary">View Our Work</a>
@@ -677,8 +760,23 @@ footer{background:var(--dark2);border-top:1px solid rgba(201,160,32,.1);padding:
 <footer id="footer">
   <div class="footer-top">
     <div>
-      <div class="footer-brand-name">Artsy <span>Brands</span></div>
-      <div class="footer-brand-tag">Crafting Your Imagination</div>
+      <svg viewBox="0 0 300 85" xmlns="http://www.w3.org/2000/svg" width="200" style="display:block;margin-bottom:8px;">
+        <defs>
+          <linearGradient id="ftGold" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#E2C060"/><stop offset="50%" stop-color="#C9A020"/><stop offset="100%" stop-color="#A07010"/>
+          </linearGradient>
+        </defs>
+        <polygon points="12,60 36,8 60,60" fill="url(#ftGold)"/>
+        <polygon points="19,60 36,22 53,60 49,60 36,28 23,60" fill="#1A1520"/>
+        <rect x="22" y="43" width="28" height="7" fill="url(#ftGold)"/>
+        <rect x="55" y="8" width="8" height="52" fill="url(#ftGold)"/>
+        <path d="M63,8 L80,8 Q96,8 96,22 Q96,31 85,34 Q100,37 100,48 Q100,60 80,60 L63,60 Z" fill="url(#ftGold)"/>
+        <path d="M71,16 L79,16 Q87,16 87,22 Q87,28 79,28 L71,28 Z" fill="#1A1520"/>
+        <path d="M71,36 L80,36 Q88,36 88,48 Q88,54 80,54 L71,54 Z" fill="#1A1520"/>
+        <path d="M6,46 Q36,4 104,10" stroke="#E8177A" stroke-width="5" fill="none" stroke-linecap="round"/>
+        <text x="112" y="38" font-family="Dancing Script, cursive" font-size="28" fill="#E8177A" font-weight="700">Artsy Brands</text>
+        <text x="113" y="56" font-family="DM Sans, sans-serif" font-size="8" fill="#C9A020" letter-spacing="2">CRAFTING YOUR IMAGINATION</text>
+      </svg>
       <p class="footer-brand-desc">Nairobi's creative branding studio — from design ideas to printed form. Quality merchandise, apparel, stationery & gifts.</p>
     </div>
     <div class="footer-col">
